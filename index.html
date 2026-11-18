@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#193d34">
+  <title>Library AR Hunt — prototype</title>
+  <style>
+    :root { color-scheme: light; --green:#193d34; --cream:#fff9ea; --gold:#edb84a; --ink:#24302b; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:#edf1e8; }
+    header { background:var(--green); color:white; padding:1rem 1rem .9rem; }
+    header h1 { margin:0; font-size:1.2rem; }
+    header p { margin:.3rem 0 0; opacity:.85; font-size:.9rem; }
+    main { max-width:760px; margin:0 auto; padding:1rem; }
+    .card { background:white; border-radius:16px; padding:1rem; margin:0 0 1rem; box-shadow:0 3px 14px #193d3412; }
+    h2 { font-size:1.1rem; margin:0 0 .55rem; }
+    p { line-height:1.45; }
+    .notice { background:#fff4d8; border-left:4px solid var(--gold); padding:.7rem .8rem; border-radius:8px; font-size:.9rem; }
+    #status { font-weight:650; min-height:1.6rem; }
+    button, .button { border:0; border-radius:10px; background:var(--green); color:white; padding:.8rem 1rem; font:inherit; font-weight:650; cursor:pointer; }
+    button:disabled { opacity:.45; cursor:default; }
+    button.secondary { background:#e8eee8; color:var(--green); }
+    .row { display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; }
+    #cameraWrap { position:relative; width:100%; min-height:180px; aspect-ratio:4/3; overflow:hidden; border-radius:14px; background:#17201c; }
+    #cameraWrap a-scene { position:absolute; inset:0; width:100%; height:100%; }
+    #cameraWrap canvas, #cameraWrap video { object-fit:cover !important; }
+    #cameraHint { position:absolute; z-index:3; inset:auto .6rem .6rem; color:white; background:#0009; border-radius:8px; padding:.45rem .6rem; font-size:.82rem; pointer-events:none; }
+    .collection { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:.65rem; }
+    .creature { border:1px solid #dce4dc; border-radius:12px; padding:.8rem; }
+    .creature strong { display:block; margin-bottom:.2rem; }
+    .creature small { color:#52615a; }
+    a { color:#155e50; }
+    footer { text-align:center; color:#58645e; font-size:.8rem; padding:.2rem 1rem 1.5rem; }
+    .hidden { display:none !important; }
+  </style>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.8/aframe/build/aframe-ar.js"></script>
+</head>
+<body>
+  <header>
+    <h1>📚 Library AR Hunt</h1>
+    <p>A small browser-based prototype</p>
+  </header>
+  <main>
+    <section class="card">
+      <h2>How to play</h2>
+      <p>Find the <b>Hiro</b> marker to meet the fox. Collect it, then scan the <b>Kanji</b> marker placed on a book page to return it to its story.</p>
+      <p class="notice">This demo saves progress only in this browser on this phone. Camera access works on a published HTTPS website. Please allow camera access when prompted.</p>
+    </section>
+
+    <section class="card">
+      <h2>Scan</h2>
+      <div id="cameraWrap">
+        <a-scene embedded vr-mode-ui="enabled:false" renderer="logarithmicDepthBuffer:true; precision:mediump;" arjs="sourceType:webcam;debugUIEnabled:false;trackingMethod:best;">
+          <a-marker id="foxMarker" preset="hiro" emitevents="true" smooth="true">
+            <a-sphere position="0 0.45 0" radius="0.28" color="#e77c32" animation="property: rotation; to: 0 360 0; dur: 2600; easing: linear; loop: true"></a-sphere>
+            <a-sphere position="0 0.42 0.23" radius="0.12" color="#fff1d0"></a-sphere>
+            <a-cone position="-0.17 0.72 0" radius-bottom="0.1" radius-top="0" height="0.23" color="#e77c32"></a-cone>
+            <a-cone position="0.17 0.72 0" radius-bottom="0.1" radius-top="0" height="0.23" color="#e77c32"></a-cone>
+            <a-text value="FOX" align="center" color="#ffffff" position="0 0.95 0" scale="0.7 0.7 0.7"></a-text>
+          </a-marker>
+          <a-marker id="bookMarker" preset="kanji" emitevents="true" smooth="true">
+            <a-box position="-0.19 0.08 0" width="0.38" height="0.05" depth="0.5" color="#f1d79d"></a-box>
+            <a-box position="0.19 0.08 0" width="0.38" height="0.05" depth="0.5" color="#fff0c9"></a-box>
+            <a-text value="BOOK" align="center" color="#193d34" position="0 0.2 0" scale="0.55 0.55 0.55"></a-text>
+            <a-entity id="returnedFox" visible="false">
+              <a-sphere position="0 0.48 0" radius="0.22" color="#e77c32" animation="property: position; dir: alternate; to: 0 0.58 0; dur: 900; loop: true"></a-sphere>
+              <a-text value="HOME!" align="center" color="#193d34" position="0 0.85 0" scale="0.55 0.55 0.55"></a-text>
+            </a-entity>
+          </a-marker>
+          <a-entity camera></a-entity>
+        </a-scene>
+        <div id="cameraHint">Point your camera at a printed marker.</div>
+      </div>
+      <p id="status" aria-live="polite">Waiting for a marker…</p>
+      <div class="row">
+        <button id="collectBtn" class="hidden">Collect the fox</button>
+        <button id="returnBtn" class="hidden">Return the fox to this book</button>
+        <button id="resetBtn" class="secondary">Reset this phone</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Your collection</h2>
+      <div class="collection">
+        <div class="creature">
+          <strong>🦊 The library fox</strong>
+          <small id="foxState">Not found yet</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>For the person setting up the demo</h2>
+      <p>Print the <a href="markers.html">marker sheet</a>. Put the Hiro marker at the fox’s hiding place and the Kanji marker inside a book. Scan the first marker to collect the fox; scan the book marker and tap the return button.</p>
+      <p>This is a technical prototype, not yet a finished library game. Replace the sample markers with illustrated targets and add your own characters, stories, and accessible instructions.</p>
+    </section>
+  </main>
+  <footer>Prototype: AR.js + A-Frame · No account or server database</footer>
+
+  <script>
+    (() => {
+      const KEY = 'library-ar-hunt-v1';
+      const state = loadState();
+      const statusEl = document.getElementById('status');
+      const foxStateEl = document.getElementById('foxState');
+      const collectBtn = document.getElementById('collectBtn');
+      const returnBtn = document.getElementById('returnBtn');
+      const returnedFox = document.getElementById('returnedFox');
+      const cameraHint = document.getElementById('cameraHint');
+      let visibleTarget = null;
+
+      function loadState() {
+        try { return JSON.parse(localStorage.getItem(KEY)) || { foxFound: false, foxReturned: false }; }
+        catch (_) { return { foxFound: false, foxReturned: false }; }
+      }
+      function save() { localStorage.setItem(KEY, JSON.stringify(state)); render(); }
+      function render() {
+        foxStateEl.textContent = state.foxReturned ? 'Returned to the book ✓' : state.foxFound ? 'Found — waiting to be returned' : 'Not found yet';
+        returnedFox.setAttribute('visible', state.foxReturned);
+        collectBtn.classList.toggle('hidden', visibleTarget !== 'fox' || state.foxFound);
+        returnBtn.classList.toggle('hidden', visibleTarget !== 'book' || !state.foxFound || state.foxReturned);
+        if (visibleTarget === 'fox') statusEl.textContent = state.foxFound ? 'You already collected the fox. Find its book!' : 'You found the fox! Tap “Collect the fox.”';
+        else if (visibleTarget === 'book') statusEl.textContent = state.foxReturned ? 'The fox is back in its book!' : state.foxFound ? 'The book is here. Return the fox to its story.' : 'You need to find the fox before returning it.';
+        else statusEl.textContent = 'Waiting for a marker…';
+      }
+      function setTarget(target) { visibleTarget = target; cameraHint.textContent = target === 'fox' ? 'Fox marker found — look at the AR fox.' : target === 'book' ? 'Book marker found — this is the return point.' : 'Point your camera at a printed marker.'; render(); }
+      document.getElementById('foxMarker').addEventListener('markerFound', () => setTarget('fox'));
+      document.getElementById('foxMarker').addEventListener('markerLost', () => { if (visibleTarget === 'fox') setTarget(null); });
+      document.getElementById('bookMarker').addEventListener('markerFound', () => setTarget('book'));
+      document.getElementById('bookMarker').addEventListener('markerLost', () => { if (visibleTarget === 'book') setTarget(null); });
+      collectBtn.addEventListener('click', () => { state.foxFound = true; save(); });
+      returnBtn.addEventListener('click', () => { state.foxReturned = true; save(); });
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        if (confirm('Clear this phone’s collection and start again?')) { state.foxFound = false; state.foxReturned = false; save(); }
+      });
+      render();
+    })();
+  </script>
+</body>
+</html>

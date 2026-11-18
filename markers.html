@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Print the AR hunt markers</title>
+<style>
+  body{font-family:system-ui,sans-serif;color:#24302b;margin:0;padding:24px;background:#faf8ef}
+  h1{color:#193d34} main{max-width:850px;margin:auto}.sheet{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  article{background:white;border:2px solid #193d34;border-radius:16px;padding:20px;text-align:center;break-inside:avoid}
+  img{width:min(100%,320px);height:auto;image-rendering:pixelated} .note{background:#fff1cd;padding:12px;border-radius:10px}
+  button{padding:12px 18px;font:inherit;font-weight:bold;background:#193d34;color:white;border:0;border-radius:8px}
+  @media print{body{padding:0;background:white}.note,button{display:none}.sheet{gap:10mm}article{border:1px solid #222}}
+</style>
+</head>
+<body><main>
+<h1>Library AR Hunt — printable targets</h1>
+<p class="note">Print at 100% scale. Keep each marker square, flat, well lit, and visible. This sample uses the standard AR.js Hiro and Kanji markers; replace them with custom designs for a public-facing game.</p>
+<p><button onclick="window.print()">Print marker sheet</button></p>
+<div class="sheet">
+<article><h2>Fox hiding place</h2><img alt="Hiro AR marker" src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png"><p>Place this marker where the visitor finds the fox.</p></article>
+<article><h2>Return the fox to the book</h2><img alt="Kanji AR marker" src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/kanji.png"><p>Place this marker inside the book or on its marked page.</p></article>
+</div>
+<p>Marker images are standard AR.js examples. The browser app needs to be served from an HTTPS website to use the phone camera.</p>
+</main></body></html>
