@@ -1,0 +1,28 @@
+export const characters = [
+  {
+    id: 'octopus',
+    name: 'The octopus',
+    icon: '🐙',
+    book: 'The Sea Book',
+    model: 'octopus',
+    color: '#e77d96',
+    size: 2.45,
+    catchAnimation: 'wave',
+    returnAnimation: 'crawl',
+    hideout: { image: 'assets/markers/octopus-hideout.svg', pattern: 'assets/markers/octopus-hideout.patt' },
+    page: { image: 'assets/markers/octopus-book.svg', pattern: 'assets/markers/octopus-book.patt' },
+  },
+  {
+    id: 'fox',
+    name: 'The fox',
+    icon: '🦊',
+    book: 'The Forest Book',
+    model: 'fox',
+    color: '#ee8b45',
+    size: 1.75,
+    catchAnimation: 'spin',
+    returnAnimation: 'hop',
+    hideout: { image: 'assets/markers/fox-hideout.svg', pattern: 'assets/markers/fox-hideout.patt' },
+    page: { image: 'assets/markers/fox-book.svg', pattern: 'assets/markers/fox-book.patt' },
+  },
+];
